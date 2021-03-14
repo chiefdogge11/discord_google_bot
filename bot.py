@@ -1,44 +1,33 @@
-
+# pip install beautifulsoup4, discord.py,wikipedia-api,aiohttp, datamart-isi
 import time
 import discord
 from discord.ext import commands
 import json
 import requests
-#from googlesearch import search
 import aiohttp
-# from flask_cors import CORS, cross_origin
 import asyncio
-#from search_engine_parser import GoogleSearch
-#from gsearch.googlesearch import search
-
-client = commands.Bot(command_prefix='-')
-
-TOKEN = 'ODIwMjIyNjUyODcwNDI2NjU1.YEyB3w.hZ1YeqBGmrLRiN8DH7s__9y5m4I'
-
-# app = Flask(name)
-# cors = CORS(app)
-# app.config['CORS_HEADERS'] = 'Content-Type'
-
-# async def googlesearch(keyword, size):
-#   query = keyword
-#   results = []
-#   for i in search(query, tld ="co.in",num=size , stop = size, pause = 2):
-#     print("i was here")
-#     results.append(i)
-#   print(results)
-#   return results
-
+import wikipediaapi
 # ------------------------------------------ bot functions
+
+client = commands.Bot(command_prefix='/')
+
+TOKEN = 'example token'  # change token
 
 
 @client.event
 async def on_ready():
-    print('Bot is ready. only search once every 30 seconds')
+    # await client.get_channel("enter channel id here").send("bot is online")
+    print("bot is ready")
 
 
 @client.command()
-async def ping(ctx, keyword, size):
-    await ctx.send("It works {} and {}".format(keyword, size))
+async def helpme(ctx):
+    await ctx.send("Available commands: /wiki and /search. When searching more than one word, please uses double quotations(""). /wiki searches your question using wikipedia and /search searches using DuckDuckGo and returns a URL")
+
+
+@client.command()
+async def pong(ctx):
+    await ctx.send("You Pinged Your Last PONG")
 
 
 @client.command()
@@ -53,36 +42,33 @@ async def search(ctx, keyword):
         )
         result = data["RelatedTopics"]
         links = []
-        for i in range(3):
+        for i in range(1):
             links.append(data["RelatedTopics"][i]["FirstURL"])
         print(links)
         await ctx.send(links)
-# async def on_message(message):
-#     if message.content.startswith('search'):
-#         searchContent = ""
-#         print("i was here")
-#         text = str(message.content).split(' ')
-#         print("i was here2")
-#         for i in range(2, len(text)):
-#             searchContent = searchContent + text[i]
-#             print(searchContent)
-#             print("i was here3")
-
-#         for j in search(searchContent, tld="co.in", num=1, stop=1, pause=2):
-#             await message.channel.send(j)
-#             print(j)
-#             print("i was here4")
-
-    # query = keyword
-    # results = []
-    # x = await search(query, tld ="co.in",num=size , stop = size, pause = 2)
-    # for i in x:
-    #   print("i was here")
-    #   results.append(i)
-    # await ctx.send("It works {} and {}".format(keyword, size))
-    # print(search(query, tld ="co.in",num=size , stop = size, pause = 2))
-    # #print(results)
-    # await ctx.send(results)
 
 
-client.run('ODIwMjIyNjUyODcwNDI2NjU1.YEyB3w.hZ1YeqBGmrLRiN8DH7s__9y5m4I')
+@client.command()
+async def wiki(ctx, keyword):
+    wiki_wiki = wikipediaapi.Wikipedia('en')
+
+    page_py = wiki_wiki.page(keyword)
+
+    print("Page - Title: %s" % page_py.title)
+
+    print("Page - Summary: %s" % page_py.summary[0:500])
+
+    await ctx.send(page_py.title + "\n" + page_py.summary[0:500] + "\n" + page_py.fullurl)
+
+# wikifull command char limted 2000 does not work
+# @client.command()
+# async def wikifull(ctx, keyword):
+#   wiki_wiki = wikipediaapi.Wikipedia(
+#     language='en',
+#     extract_format=wikipediaapi.ExtractFormat.WIKI
+#   )
+#   p_wiki = wiki_wiki.page(keyword)
+#   await ctx.send(p_wiki.text)
+
+
+client.run('example token')  # change token
